@@ -5,11 +5,11 @@ using System.Dynamic;
 
 namespace BlazorECharts.Abstract;
 
-public class BaseChartComponent : ComponentBase, IAsyncDisposable
+public abstract class BaseChartComponent : ComponentBase, IAsyncDisposable
 {
     #region Style
     [Parameter]
-    public string Width { get; set; } = "600px";
+    public string Width { get; set; } = "100%";
     [Parameter]
     public string Height { get; set; } = "400px";
     #endregion
@@ -19,13 +19,7 @@ public class BaseChartComponent : ComponentBase, IAsyncDisposable
     protected IJSRuntime JS { get; set; }
     protected ElementReference container;
     protected IJSObjectReference myChart { get; set; }
-    protected DotNetObjectReference<BaseChartComponent> componentRef { get; set; }
-    #endregion
-
-    #region Options
-    [Parameter]
-    public Dictionary<string, ExpandoObject> Option { get; set; } = new();
-
+    protected IJSObjectReference chartHelper { get; set; }
     #endregion
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -34,16 +28,13 @@ public class BaseChartComponent : ComponentBase, IAsyncDisposable
         {
             await JS.InvokeVoidAsync("import", "./_content/BlazorECharts/echarts.min.js");
             myChart = await JS.InvokeAsync<IJSObjectReference>("echarts.init", container);
-            componentRef = DotNetObjectReference.Create(this);
-            await RegisterWindowResiveEvent();
+            var module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorECharts/echarts-helper.js");
+            var options = await LoadChartOptions();
+            chartHelper = await module.InvokeAsync<IJSObjectReference>("getInstance", options);
         }
     }
 
-    private async Task RegisterWindowResiveEvent()
-    {
-        var module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorECharts/helper.js");
-        await module.InvokeVoidAsync("register_window_resize_event", componentRef, "ChartResize");
-    }
+    protected abstract Task<IJSObjectReference> LoadChartOptions();
 
     public async ValueTask DisposeAsync()
     {
@@ -51,18 +42,16 @@ public class BaseChartComponent : ComponentBase, IAsyncDisposable
         {
             await myChart.InvokeVoidAsync("dispose");
             await myChart.DisposeAsync();
-            componentRef.Dispose();
+        }
+        if (chartHelper != null)
+        {
+            await chartHelper.DisposeAsync();
         }
     }
 
     public async Task Draw()
     {
-        await myChart.InvokeVoidAsync("setOption", Option);
-    }
-
-    [JSInvokable]
-    public async Task ChartResize()
-    {
-        await myChart.InvokeVoidAsync("resize");
+        var options = await chartHelper.InvokeAsync<IJSObjectReference>("getOptions");
+        await myChart.InvokeVoidAsync("setOption", options);
     }
 }

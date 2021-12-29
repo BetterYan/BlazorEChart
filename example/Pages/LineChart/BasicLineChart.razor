@@ -1,0 +1,14 @@
+﻿@page "/LineChart/BasicLineChart"
+@using BlazorECharts.LineChart
+
+<button @onclick="DrawBtnClick">Draw</button>
+<LineChartContainer @ref=lineChartContainer Width="50%"></LineChartContainer>
+
+@code {
+    private LineChartContainer lineChartContainer;
+
+    private async void DrawBtnClick()
+    {
+        await lineChartContainer.Draw();
+    }
+}

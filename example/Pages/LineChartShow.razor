@@ -1,0 +1,31 @@
+﻿@page "/LineChartShow"
+
+<button @onclick="DrawBtnClick">Draw</button>
+<div class="row">
+    <BlazorECharts.LineChart @ref=charts[0] Width="33%"></BlazorECharts.LineChart>
+    <BlazorECharts.LineChart @ref=charts[1] Width="33%" TheChartType=BlazorECharts.LineChart.ChartType.SmoothedLineChart></BlazorECharts.LineChart>
+    <BlazorECharts.LineChart @ref=charts[2] Width="33%" TheChartType=BlazorECharts.LineChart.ChartType.BasicAreaChart></BlazorECharts.LineChart>
+</div>
+<div class="row">
+    <BlazorECharts.LineChart @ref=charts[3] Width="33%" TheChartType=BlazorECharts.LineChart.ChartType.StackedLineChart></BlazorECharts.LineChart>
+    <BlazorECharts.LineChart @ref=charts[4] Width="33%" TheChartType=BlazorECharts.LineChart.ChartType.StackedAreaChart></BlazorECharts.LineChart>
+    <BlazorECharts.LineChart @ref=charts[5] Width="33%" TheChartType=BlazorECharts.LineChart.ChartType.GradientStackedAreaChart></BlazorECharts.LineChart>
+</div>
+
+<div class="row">
+    <BlazorECharts.LineChart @ref=charts[6] Width="33%" TheChartType=BlazorECharts.LineChart.ChartType.TemperatureChangeInTheComingWeek></BlazorECharts.LineChart>
+    <BlazorECharts.LineChart @ref=charts[7] Width="33%" TheChartType=BlazorECharts.LineChart.ChartType.AreaPieces></BlazorECharts.LineChart>
+</div>
+
+@code {
+    private BlazorECharts.Abstract.BaseChartComponent[] charts = new BlazorECharts.Abstract.BaseChartComponent[100];
+
+    private async void DrawBtnClick()
+    {
+        foreach (var chart in charts)
+        {
+            if (chart == null) break;
+            await chart.Draw();
+        }
+    }
+}

@@ -1,0 +1,26 @@
+﻿@inherits Abstract.BaseChartComponent
+
+<div @ref="container" style="width:@Width;height:@Height"></div>
+
+@code {
+    [Parameter]
+    public ChartType TheChartType { get; set; } = ChartType.BasicLineChart;
+
+    protected override async Task<IJSObjectReference> LoadChartOptions()
+    {
+        var module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorECharts/options/line-chart-options.js");
+        return await module.InvokeAsync<IJSObjectReference>("getOption", TheChartType.ToString());
+    }
+
+    public enum ChartType
+    {
+        BasicLineChart,
+        SmoothedLineChart,
+        BasicAreaChart,
+        StackedLineChart,
+        StackedAreaChart,
+        GradientStackedAreaChart,
+        TemperatureChangeInTheComingWeek,
+        AreaPieces
+    }
+} 

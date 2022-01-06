@@ -7,17 +7,30 @@
         this.options = options;
     }
 
-    setXAisData(value) {
-        this.options.xAxis.data = value;
+    setXAisData(value, index) {
+        if (index == null) {
+            this.options.xAxis.data = value;
+        } else {
+            this.options.xAxis[index].data = value;
+        }
     }
 
-    setYAxisData(value) {
-        this.options.yAxis.data = value;
+    setYAxisData(value, index) {
+        if (index == null) {
+            this.options.yAxis.data = value
+        }
+        else {
+            this.options.yAxis[index].data = value;
+        }
     }
 
     setSeriesData(data, index) {
-        if (this.options.series[index] == null) {
-            throw "The index is out of range";
+        let length = this.options.series.length;
+        if (index > length - 1) {
+            for (let i = length; i <= length; i++) {
+                this.options.series[i] = Object.assign({}, this.options.series[0]);
+                this.options.series[i].data = data;
+            }
         }
         this.options.series[index].data = data;
     }

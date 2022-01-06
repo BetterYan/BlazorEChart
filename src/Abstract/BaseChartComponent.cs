@@ -62,14 +62,14 @@ public abstract class BaseChartComponent : ComponentBase, IAsyncDisposable
         await myChart.InvokeVoidAsync("setOption", options);
     }
 
-    public async Task SetXAxisData<T>(IEnumerable<T> data)
+    public async Task SetXAxisData<T>(IEnumerable<T> data, int? index = null)
     {
-        await chartHelper.InvokeVoidAsync("setXAisData", data);
+        await chartHelper.InvokeVoidAsync("setXAisData", data, index);
     }
 
-    public async Task SetYAxisData<T>(IEnumerable<T> data)
+    public async Task SetYAxisData<T>(IEnumerable<T> data, int? index = null)
     {
-        await chartHelper.InvokeVoidAsync("setYAisData", data);
+        await chartHelper.InvokeVoidAsync("setYAisData", data, index);
     }
 
     public async Task SetSeriesData<T>(IEnumerable<T> data, int index)
